@@ -111,17 +111,28 @@ async function fetchPrice() {
     priceInput.style.opacity = "1";
 }
 
+const PROXY_URL = "https://corsproxy.io/?";
+
+async function fetchWithFallback(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Direct fetch failed");
+        return await response.json();
+    } catch (e) {
+        console.warn("Direct fetch failed, trying proxy...", e);
+        const proxyResponse = await fetch(PROXY_URL + encodeURIComponent(url));
+        if (!proxyResponse.ok) throw new Error("Proxy fetch failed");
+        return await proxyResponse.json();
+    }
+}
+
 async function fetchCoinGeckoPrice() {
-    const response = await fetch(API_URL_CG);
-    if (!response.ok) throw new Error("CG Error");
-    const data = await response.json();
+    const data = await fetchWithFallback(API_URL_CG);
     return data.nexo.eur;
 }
 
 async function fetchKrakenPrice() {
-    const response = await fetch(API_URL_KRAKEN);
-    if (!response.ok) throw new Error("Kraken Error");
-    const data = await response.json();
+    const data = await fetchWithFallback(API_URL_KRAKEN);
     // Kraken response format: { result: { NEXOEUR: { c: ["0.954", "123.4"] } } }
     // c[0] is the last closed price
     const pairData = Object.values(data.result)[0];

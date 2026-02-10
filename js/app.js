@@ -9,7 +9,64 @@ if ('serviceWorker' in navigator) {
     });
 }
 
+// PWA Install Logic
+let deferredPrompt;
+const installBtn = document.getElementById('installBtn');
 
+// Detect iOS
+const isIos = () => {
+    const userAgent = window.navigator.userAgent.toLowerCase();
+    return /iphone|ipad|ipod/.test(userAgent);
+}
+
+// Check if app is in standalone mode
+const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
+
+window.addEventListener('beforeinstallprompt', (e) => {
+    // Prevent Chrome 67 and earlier from automatically showing the prompt
+    e.preventDefault();
+    // Stash the event so it can be triggered later.
+    deferredPrompt = e;
+    // Update UI to notify the user they can add to home screen
+    if (installBtn) installBtn.style.display = 'flex';
+});
+
+// Show button on iOS if not already installed
+if (isIos() && !isInStandaloneMode() && installBtn) {
+    installBtn.style.display = 'flex';
+}
+
+if (installBtn) {
+    installBtn.addEventListener('click', () => {
+        // iOS Logic
+        if (isIos()) {
+            alert("To install on iOS:\n1. Tap the Share button (at the bottom center)\n2. Scroll down and select 'Add to Home Screen'");
+            return;
+        }
+
+        // Android/Desktop Logic
+        installBtn.style.display = 'none';
+        // Show the prompt
+        if (deferredPrompt) {
+            deferredPrompt.prompt();
+            // Wait for the user to respond to the prompt
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('User accepted the A2HS prompt');
+                } else {
+                    console.log('User dismissed the A2HS prompt');
+                    // Show button again if dismissed?
+                    // installBtn.style.display = 'flex';
+                }
+                deferredPrompt = null;
+            });
+        }
+    });
+}
+
+window.addEventListener('appinstalled', (evt) => {
+    console.log('App successfully installed');
+});
 
 
 // Logic
@@ -29,15 +86,17 @@ document.addEventListener('DOMContentLoaded', () => {
         refreshBtn.addEventListener('click', fetchPrice);
     }
 
-    const calculateBtn = document.querySelector('.btn-calculate');
-    if (calculateBtn) {
-        calculateBtn.addEventListener('click', calculate);
-    }
+    const inputs = ['nexoQty', 'nexoPrice', 'currentPct', 'targetPct'];
+    inputs.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', calculate);
+        }
+    });
 
-    const clearBtn = document.querySelector('.btn-clear');
-    if (clearBtn) {
-        clearBtn.addEventListener('click', clearInputs);
-    }
+    // Initial calculation in case values are loaded
+    // Small delay to ensure price fetch might have updated UI, though logic depends on values
+    setTimeout(calculate, 500);
 });
 
 async function fetchPrice() {
@@ -68,6 +127,7 @@ async function fetchPrice() {
         priceInput.value = price;
         statusLabel.innerText = `Live: ${source}`;
         statusLabel.className = "api-status status-ok";
+        calculate(); // Trigger calculation after price update
     } else {
         statusLabel.innerText = "Error: All APIs failed";
         statusLabel.className = "api-status status-error";
@@ -104,31 +164,39 @@ async function fetchKrakenPrice() {
     return parseFloat(pairData.c[0]);
 }
 
-function clearInputs() {
-    document.getElementById('nexoQty').value = '';
-    document.getElementById('nexoPrice').value = '';
-    document.getElementById('currentPct').value = '';
-    // Don't clear targetPct as it has a default
-    // document.getElementById('targetPct').value = '10.5'; 
+function resetResultUI() {
+    const resultBox = document.getElementById('result');
+    const actionText = document.getElementById('actionText');
 
-    document.getElementById('result').style.display = 'none';
-    document.getElementById('breakdown').style.display = 'none';
+    // Reset classes
+    resultBox.classList.remove('result-sell', 'result-buy');
 
-    localStorage.removeItem('nexo_qty');
-    // localStorage.removeItem('nexo_target'); // Keep user preference
+    actionText.innerText = "---";
+    document.getElementById('tokenValue').innerText = "---";
+    document.getElementById('euroValue').innerText = "---";
+    document.getElementById('bufferText').innerText = "Enter all data";
 
-    // Re-fetch price as it might be useful
-    fetchPrice();
+    document.getElementById('totalPortVal').innerText = "€ 0.00";
+    document.getElementById('targetNexoVal').innerText = "€ 0.00";
+    document.getElementById('targetLabel').innerText = "0";
 }
 
 function calculate() {
-    const qty = parseFloat(document.getElementById('nexoQty').value);
-    const price = parseFloat(document.getElementById('nexoPrice').value);
-    const currentPct = parseFloat(document.getElementById('currentPct').value);
-    const targetPct = parseFloat(document.getElementById('targetPct').value);
+    const qtyInput = document.getElementById('nexoQty').value;
+    const priceInput = document.getElementById('nexoPrice').value;
+    const currentPctInput = document.getElementById('currentPct').value;
+    const targetPctInput = document.getElementById('targetPct').value;
 
-    if (isNaN(qty) || isNaN(price) || isNaN(currentPct) || isNaN(targetPct)) {
-        alert("Dati mancanti o non validi!");
+    const qty = parseFloat(qtyInput);
+    const price = parseFloat(priceInput);
+    const currentPct = parseFloat(currentPctInput);
+    const targetPct = parseFloat(targetPctInput);
+
+    // Strict validation: if any field is empty or NaN, reset UI
+    if (isNaN(qty) || isNaN(price) || isNaN(currentPct) || isNaN(targetPct) ||
+        qtyInput === '' || priceInput === '' || currentPctInput === '' || targetPctInput === '') {
+        alert("Missing or invalid data!");
+        resetResultUI();
         return;
     }
 
@@ -142,13 +210,9 @@ function calculate() {
     const tokensToMove = valueToMove / price;
 
     const resultBox = document.getElementById('result');
-    const breakdownBox = document.getElementById('breakdown');
     const actionText = document.getElementById('actionText');
 
-    resultBox.style.display = 'block';
-    breakdownBox.style.display = 'block';
-
-    const fmtEuro = (n) => `€ ${n.toLocaleString('it-IT', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+    const fmtEuro = (n) => `€ ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
     document.getElementById('totalPortVal').innerText = fmtEuro(totalPortfolio);
     document.getElementById('targetNexoVal').innerText = fmtEuro(targetNexoValue);
@@ -157,19 +221,25 @@ function calculate() {
     // Reset classes
     resultBox.classList.remove('result-sell', 'result-buy');
 
-    if (valueToMove > 0) {
+    if (Math.abs(valueToMove) < 0.01) {
+        // Balanced
+        actionText.innerText = "BALANCED";
+        document.getElementById('tokenValue').innerText = "Ok";
+        document.getElementById('euroValue').innerText = "Portfolio aligned";
+        document.getElementById('bufferText').innerText = `Target: ${targetPct}%`;
+    } else if (valueToMove > 0) {
         resultBox.classList.add('result-sell');
-        actionText.innerText = "VENDI";
+        actionText.innerText = "SELL";
         document.getElementById('tokenValue').innerText = `-${tokensToMove.toFixed(2)}`;
-        document.getElementById('euroValue').innerText = `Incassi: ${fmtEuro(valueToMove)}`;
-        document.getElementById('bufferText').innerText = `Mantieni il ${targetPct}%`;
+        document.getElementById('euroValue').innerText = `Proceeds: ${fmtEuro(valueToMove)}`;
+        document.getElementById('bufferText').innerText = `Hold ${targetPct}%`;
     } else {
         const absTokens = Math.abs(tokensToMove);
         const absValue = Math.abs(valueToMove);
         resultBox.classList.add('result-buy');
-        actionText.innerText = "COMPRA";
+        actionText.innerText = "BUY";
         document.getElementById('tokenValue').innerText = `+${absTokens.toFixed(2)}`;
-        document.getElementById('euroValue').innerText = `Spendi: ${fmtEuro(absValue)}`;
-        document.getElementById('bufferText').innerText = `Risali al ${targetPct}%`;
+        document.getElementById('euroValue').innerText = `Cost: ${fmtEuro(absValue)}`;
+        document.getElementById('bufferText').innerText = `Reach ${targetPct}%`;
     }
 }

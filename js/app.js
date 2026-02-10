@@ -195,7 +195,7 @@ function calculate() {
     // Strict validation: if any field is empty or NaN, reset UI
     if (isNaN(qty) || isNaN(price) || isNaN(currentPct) || isNaN(targetPct) ||
         qtyInput === '' || priceInput === '' || currentPctInput === '' || targetPctInput === '') {
-        alert("Missing or invalid data!");
+        // alert("Missing or invalid data!"); // Removed to prevent annoyance on load
         resetResultUI();
         return;
     }

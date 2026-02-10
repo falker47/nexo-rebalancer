@@ -27,7 +27,7 @@ This tool calculates the exact amount of NEXO tokens to sell or buy to maintain 
 The calculator uses the following logic to determine the delta to swap, assuming the **Total Portfolio Value ($V_{tot}$)** remains constant during the swap (asset A $\leftrightarrow$ asset B).
 
 1.  **Extract Implicit $V_{tot}$:**
-    $$V_{tot} = \frac{Q_{nexo} \cdot P_{market}}{\%_{current}}$$
+    $$V_{tot} = \frac{Q_{nexo} \cdot P_{market}}{(\%_{current} / 100)}$$
 2.  **Calculate Target Value ($V_{target}$):**
     $$V_{target} = V_{tot} \cdot \%_{desired}$$
 3.  **Calculate Delta ($Q_{delta}$):**
@@ -62,7 +62,7 @@ cd nexo-rebalancer
 ```
 ---
 
-### ⚠️ Disclaimer
+## ⚠️ Disclaimer
 This software is provided "as is", without warranty of any kind.
 
 The author is not affiliated with Nexo.

@@ -9,42 +9,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// PWA Install Logic
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
 
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
-    // Stash the event so it can be triggered later.
-    deferredPrompt = e;
-    // Update UI to notify the user they can add to home screen
-    if (installBtn) installBtn.style.display = 'flex';
-});
-
-if (installBtn) {
-    installBtn.addEventListener('click', () => {
-        // hide our user interface that shows our A2HS button
-        installBtn.style.display = 'none';
-        // Show the prompt
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
-                } else {
-                    console.log('User dismissed the A2HS prompt');
-                }
-                deferredPrompt = null;
-            });
-        }
-    });
-}
-
-window.addEventListener('appinstalled', (evt) => {
-    console.log('App successfully installed');
-});
 
 
 // Logic
@@ -111,17 +76,28 @@ async function fetchPrice() {
     priceInput.style.opacity = "1";
 }
 
+const PROXY_URL = "https://corsproxy.io/?";
+
+async function fetchWithFallback(url) {
+    try {
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("Direct fetch failed");
+        return await response.json();
+    } catch (e) {
+        console.warn("Direct fetch failed, trying proxy...", e);
+        const proxyResponse = await fetch(PROXY_URL + encodeURIComponent(url));
+        if (!proxyResponse.ok) throw new Error("Proxy fetch failed");
+        return await proxyResponse.json();
+    }
+}
+
 async function fetchCoinGeckoPrice() {
-    const response = await fetch(API_URL_CG);
-    if (!response.ok) throw new Error("CG Error");
-    const data = await response.json();
+    const data = await fetchWithFallback(API_URL_CG);
     return data.nexo.eur;
 }
 
 async function fetchKrakenPrice() {
-    const response = await fetch(API_URL_KRAKEN);
-    if (!response.ok) throw new Error("Kraken Error");
-    const data = await response.json();
+    const data = await fetchWithFallback(API_URL_KRAKEN);
     // Kraken response format: { result: { NEXOEUR: { c: ["0.954", "123.4"] } } }
     // c[0] is the last closed price
     const pairData = Object.values(data.result)[0];

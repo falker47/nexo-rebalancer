@@ -1,36 +1,36 @@
 # 🦁 Nexo Platinum Rebalancer
 
-> **Tool PWA (Progressive Web App) per mantenere il Tier Platinum su Nexo ottimizzando le oscillazioni di mercato.**
+> **A PWA (Progressive Web App) tool to maintain the Platinum Tier on Nexo by optimizing market fluctuations.**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 [![Status: Stable](https://img.shields.io/badge/Status-Stable-success.svg)]()
 [![Privacy: Local](https://img.shields.io/badge/Privacy-100%25_Local-blue.svg)]()
 
-Questo tool calcola l'esatta quantità di token NEXO da vendere o acquistare per mantenere una percentuale target (es. 10%) sul portafoglio totale. Risolve il problema matematico dell'**invarianza del portafoglio**: calcola il rebalancing considerando che il capitale scambiato rimane all'interno dell'ecosistema (non esce dal wallet).
+This tool calculates the exact amount of NEXO tokens to sell or buy to maintain a target percentage (e.g., 10%) of your total portfolio. It addresses the **portfolio invariance** mathematical problem: it calculates rebalancing while considering that the swapped capital remains within the ecosystem (does not leave the wallet).
 
-🔗 **[Apri la Web App](https://falker47.github.io/nexo-rebalancer/)**
+🔗 **[Open Web App](https://falker47.github.io/nexo-rebalancer/)**
 
 ---
 
 ## 🚀 Features
 
-* **📊 Calcolo Differenziale Reale:** Non si limita a calcolare il 10% del valore attuale, ma simula il portafoglio *post-swap* per garantire che il target venga raggiunto matematicamente.
-* **🛡️ Safety Buffer (Cuscinetto):** Permette di impostare un target "over-platinum" (es. 10.5%) per assorbire la volatilità e le fee di scambio senza perdere il tier.
-* **📡 Live Price Fetching:** Recupera il prezzo `NEXO/EUR` in tempo reale tramite API pubblica (CoinGecko).
-* **🔒 Privacy-First:** Nessun database, nessun backend. I dati (quantità token) vengono salvati solo nel `localStorage` del tuo browser.
-* **📱 PWA Ready:** Installabile su iOS e Android come applicazione nativa (funziona offline).
+* **📊 Real Differential Calculation:** It doesn't just calculate 10% of the current value but simulates the *post-swap* portfolio to ensure the target is mathematically achieved.
+* **🛡️ Safety Buffer:** Allows setting an "over-platinum" target (e.g., 10.5%) to absorb volatility and exchange fees without losing the tier.
+* **📡 Live Price Fetching:** Retrieves real-time `NEXO/EUR` price via public API (CoinGecko).
+* **🔒 Privacy-First:** No database, no backend. Data (token quantity) is saved only in your browser's `localStorage`.
+* **📱 PWA Ready:** Installable on iOS and Android as a native application (works offline).
 
 ---
 
-## 🧮 Logica Matematica
+## 🧮 Mathematical Logic
 
-Il calcolatore utilizza la seguente logica per determinare il delta da scambiare, assumendo che il **Total Portfolio Value ($V_{tot}$)** rimanga costante durante lo swap (asset A $\leftrightarrow$ asset B).
+The calculator uses the following logic to determine the delta to swap, assuming the **Total Portfolio Value ($V_{tot}$)** remains constant during the swap (asset A $\leftrightarrow$ asset B).
 
-1.  **Estrazione $V_{tot}$ Implicito:**
+1.  **Extract Implicit $V_{tot}$:**
     $$V_{tot} = \frac{Q_{nexo} \cdot P_{market}}{\%_{current}}$$
-2.  **Calcolo Target Value ($V_{target}$):**
+2.  **Calculate Target Value ($V_{target}$):**
     $$V_{target} = V_{tot} \cdot \%_{desired}$$
-3.  **Calcolo Delta ($Q_{delta}$):**
+3.  **Calculate Delta ($Q_{delta}$):**
     $$Q_{delta} = \frac{(Q_{nexo} \cdot P_{market}) - V_{target}}{P_{market}}$$
 
 ---
@@ -39,36 +39,37 @@ Il calcolatore utilizza la seguente logica per determinare il delta da scambiare
 
 * **Core:** HTML5, CSS3 (Responsive Grid), Vanilla JavaScript (ES6+).
 * **API:** [CoinGecko Simple Price API](https://www.coingecko.com/en/api).
-* **PWA:** Service Worker custom per caching e offline support.
+* **PWA:** Custom Service Worker for caching and offline support.
 
 ---
 
-## 📦 Installazione e Uso
+## 📦 Installation and Usage
 
-### Metodo 1: Web App (Consigliato)
-1.  Visita il link del progetto tramite browser mobile (Chrome/Safari).
-2.  Premi "Condividi" (iOS) o Menu (Android) -> **"Aggiungi a Schermata Home"**.
-3.  Lancia l'app dall'icona creata.
+### Method 1: Web App (Recommended)
+1.  Visit the project link via mobile browser (Chrome/Safari).
+2.  Tap "Share" (iOS) or Menu (Android) -> **"Add to Home Screen"**.
+3.  Launch the app from the created icon.
 
-### Metodo 2: Locale (Dev)
+### Method 2: Local (Dev)
 ```bash
-# Clona la repository
-git clone [https://github.com/falker47/nexo-rebalancer.git](https://github.com/falker47/nexo-rebalancer.git)
+# Clone the repository
+git clone https://github.com/falker47/nexo-rebalancer.git
 
-# Entra nella cartella
+# Enter the folder
 cd nexo-rebalancer
 
-# Apri index.html con un browser qualsiasi
+# Open index.html with any browser
+```
 
-⚠️ Disclaimer
-Questo software è fornito "così com'è", senza garanzie.
+### ⚠️ Disclaimer
+This software is provided "as is", without warranty of any kind.
 
-L'autore non è affiliato con Nexo.
+The author is not affiliated with Nexo.
 
-Questo tool non fornisce consulenza finanziaria.
+This tool does not provide financial advice.
 
-Le API di CoinGecko sono pubbliche e potrebbero subire rate-limiting.
+CoinGecko APIs are public and may be subject to rate-limiting.
 
-Controlla sempre i calcoli prima di eseguire ordini di grandi dimensioni.
+Always check calculations before executing large orders.
 
 Made with ❤️ by Falker47

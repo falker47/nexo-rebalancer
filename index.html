@@ -28,57 +28,63 @@
                 <path
                     d="M480-320 280-520l56-58 104 104v-326h80v326l104-104 56 58-200 200ZM240-160q-33 0-56.5-23.5T160-240v-120h80v120h480v-120h80v120q0 33-23.5 56.5T720-160H240Z" />
             </svg>
-            <span>Installa App</span>
+            <span>Install App</span>
         </button>
-        <h2>Nexo Rebalancer</h2>
-
-        <div class="input-group">
-            <label>Quantità NEXO</label>
-            <input type="number" id="nexoQty" placeholder="0.00" inputmode="decimal">
-        </div>
-
-        <div class="input-group">
-            <label>Prezzo NEXO (€)</label>
-            <div class="price-wrapper">
-                <input type="number" id="nexoPrice" step="0.0001" placeholder="Fetching..." inputmode="decimal">
-                <button class="refresh-btn">↻</button>
+        <header class="main-header">
+            <div class="header-text">
+                <h1>Nexo Rebalancer</h1>
+                <p class="subtitle">Platinum Tier Optimizer</p>
             </div>
-            <div id="apiStatus" class="api-status">Wait...</div>
-        </div>
+        </header>
 
-        <div class="input-group">
-            <label>Tua % Attuale</label>
-            <input type="number" id="currentPct" step="0.01" placeholder="12.40" inputmode="decimal">
-        </div>
+        <div class="grid-layout">
+            <div class="inputs-col">
+                <div class="input-group">
+                    <label>NEXO Quantity</label>
+                    <input type="number" id="nexoQty" placeholder="0.00" inputmode="decimal">
+                </div>
 
-        <div class="separator"></div>
+                <div class="input-group">
+                    <label>NEXO Price (€)</label>
+                    <div class="price-wrapper">
+                        <input type="number" id="nexoPrice" step="0.0001" placeholder="Fetching..." inputmode="decimal">
+                        <button class="refresh-btn">↻</button>
+                    </div>
+                    <div id="apiStatus" class="api-status">Wait...</div>
+                </div>
 
-        <div class="input-group">
-            <label style="color: var(--highlight);">Target Sicurezza (%)</label>
-            <input type="number" id="targetPct" step="0.1" value="10.5" style="border-color: var(--highlight);"
-                inputmode="decimal">
-        </div>
+                <div class="input-group">
+                    <label>Current Allocation %</label>
+                    <input type="number" id="currentPct" step="0.01" placeholder="12.40" inputmode="decimal">
+                </div>
 
-        <div class="btn-group">
-            <button class="btn btn-clear">Clear</button>
-            <button class="btn btn-calculate">Calcola</button>
-        </div>
+                <div class="separator"></div>
 
-        <div id="result" class="result-box">
-            <span class="action-title" id="actionText"></span>
-            <span class="action-value" id="tokenValue"></span>
-            <span class="euro-value" id="euroValue"></span>
-            <span class="safe-badge" id="bufferText"></span>
-        </div>
-
-        <div id="breakdown" class="breakdown">
-            <div class="breakdown-row">
-                <span class="val-label">Totale Portafoglio</span>
-                <span class="val-data" id="totalPortVal"></span>
+                <div class="input-group">
+                    <label style="color: var(--highlight);">Target Allocation (%)</label>
+                    <input type="number" id="targetPct" step="0.1" value="10.5" style="border-color: var(--highlight);"
+                        inputmode="decimal">
+                </div>
             </div>
-            <div class="breakdown-row">
-                <span class="val-label">Target NEXO (<span id="targetLabel"></span>%)</span>
-                <span class="val-data highlight-text" id="targetNexoVal"></span>
+
+            <div class="results-col">
+                <div id="result" class="result-box">
+                    <span class="action-title" id="actionText">---</span>
+                    <span class="action-value" id="tokenValue">---</span>
+                    <span class="euro-value" id="euroValue">---</span>
+                    <span class="safe-badge" id="bufferText">Enter all data</span>
+                </div>
+
+                <div id="breakdown" class="breakdown">
+                    <div class="breakdown-row">
+                        <span class="val-label">Total Portfolio</span>
+                        <span class="val-data" id="totalPortVal">€ 0,00</span>
+                    </div>
+                    <div class="breakdown-row">
+                        <span class="val-label">Target NEXO (<span id="targetLabel">0</span>%)</span>
+                        <span class="val-data highlight-text" id="targetNexoVal">€ 0,00</span>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

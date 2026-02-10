@@ -1,0 +1,328 @@
+/* Modern CSS with Glassmorphism */
+:root {
+    --bg-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+    --card-bg: rgba(30, 41, 59, 0.7);
+    --card-border: 1px solid rgba(255, 255, 255, 0.1);
+    --text-color: #f1f5f9;
+    --text-muted: #94a3b8;
+
+    --accent-primary: #3b82f6;
+    --accent-secondary: #0ea5e9;
+    --accent-sell: #ef4444;
+    /* Red */
+    --accent-buy: #10b981;
+    /* Emerald */
+
+    --input-bg: rgba(15, 23, 42, 0.6);
+    --input-focus: rgba(59, 130, 246, 0.2);
+
+    --highlight: #f59e0b;
+    /* Amber */
+}
+
+body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg-gradient);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+    overscroll-behavior: none;
+}
+
+.container {
+    background: var(--card-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: var(--card-border);
+    padding: 2rem;
+    border-radius: 24px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 420px;
+    transition: transform 0.3s ease;
+    position: relative;
+    /* For absolute positioning of install btn */
+}
+
+h2 {
+    text-align: center;
+    margin: 0 0 2rem 0;
+    color: #fff;
+    font-weight: 800;
+    font-size: 1.8rem;
+    letter-spacing: -1px;
+    background: linear-gradient(to right, #60a5fa, #3b82f6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* Install Button */
+.install-btn {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: none;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: all 0.2s;
+}
+
+.install-btn:hover {
+    background: rgba(59, 130, 246, 0.2);
+    color: var(--accent-primary);
+}
+
+.install-btn svg {
+    width: 24px;
+    height: 24px;
+}
+
+
+.input-group {
+    margin-bottom: 1.25rem;
+    position: relative;
+}
+
+label {
+    display: block;
+    font-size: 0.75rem;
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    font-weight: 700;
+    letter-spacing: 0.8px;
+}
+
+input {
+    width: 100%;
+    padding: 16px;
+    background-color: var(--input-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 12px;
+    color: #fff;
+    font-size: 1.25rem;
+    box-sizing: border-box;
+    font-family: 'Courier New', monospace;
+    /* Monospace for numbers */
+    transition: all 0.3s ease;
+    font-weight: 600;
+}
+
+input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    background-color: var(--input-focus);
+    box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1);
+}
+
+.price-wrapper {
+    display: flex;
+    gap: 10px;
+}
+
+.refresh-btn {
+    background-color: var(--input-bg);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    padding: 0 18px;
+    border-radius: 12px;
+    cursor: pointer;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+}
+
+.refresh-btn:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+.refresh-btn:active {
+    transform: scale(0.95);
+}
+
+.api-status {
+    font-size: 0.75rem;
+    text-align: right;
+    margin-top: 6px;
+    min-height: 18px;
+    color: var(--text-muted);
+    font-weight: 500;
+}
+
+.status-ok {
+    color: var(--accent-buy);
+}
+
+.status-error {
+    color: var(--accent-sell);
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 10px;
+    margin-top: 25px;
+}
+
+.btn {
+    padding: 18px;
+    border: none;
+    border-radius: 14px;
+    font-weight: 700;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1rem;
+}
+
+.btn-calculate {
+    flex: 2;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    color: white;
+    box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+}
+
+.btn-calculate:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.btn-calculate:active {
+    transform: translateY(0);
+}
+
+.btn-clear {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05);
+    color: var(--text-muted);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.btn-clear:hover {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Results */
+.result-box {
+    margin-top: 2rem;
+    padding: 1.5rem;
+    border-radius: 16px;
+    text-align: center;
+    display: none;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.result-sell {
+    background: rgba(239, 68, 68, 0.1);
+    border: 1px solid rgba(239, 68, 68, 0.2);
+    color: #fca5a5;
+}
+
+.result-buy {
+    background: rgba(16, 185, 129, 0.1);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+    color: #6ee7b7;
+}
+
+.action-title {
+    font-weight: 900;
+    font-size: 1.8rem;
+    display: block;
+    margin-bottom: 0.5rem;
+    letter-spacing: -0.5px;
+}
+
+.action-value {
+    font-size: 2.2rem;
+    font-weight: 700;
+    display: block;
+    font-family: monospace;
+    line-height: 1.1;
+    margin-bottom: 8px;
+}
+
+.euro-value {
+    font-size: 1rem;
+    opacity: 0.8;
+    display: block;
+    font-weight: 500;
+}
+
+.safe-badge {
+    font-size: 0.75rem;
+    background: rgba(0, 0, 0, 0.2);
+    padding: 6px 14px;
+    border-radius: 30px;
+    margin-top: 14px;
+    display: inline-block;
+    font-weight: 600;
+}
+
+/* Breakdown */
+.breakdown {
+    margin-top: 1.5rem;
+    background: rgba(0, 0, 0, 0.2);
+    border-radius: 12px;
+    padding: 1.25rem;
+    font-size: 0.9rem;
+    display: none;
+}
+
+.breakdown-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
+.breakdown-row:last-child {
+    margin-bottom: 0;
+}
+
+.val-label {
+    color: var(--text-muted);
+}
+
+.val-data {
+    color: #fff;
+    font-family: monospace;
+    font-weight: 600;
+}
+
+.highlight-text {
+    color: var(--highlight);
+}
+
+/* Separator */
+.separator {
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    margin: 20px 0;
+}

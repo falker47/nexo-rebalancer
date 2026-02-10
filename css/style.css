@@ -61,45 +61,7 @@ h2 {
     -webkit-text-fill-color: transparent;
 }
 
-/* Install Button */
-.install-btn {
-    position: fixed;
-    bottom: 30px;
-    left: 50%;
-    transform: translateX(-50%);
-    background: rgba(30, 41, 59, 0.9);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    width: auto;
-    height: 48px;
-    padding: 0 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    color: #fff;
-    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    z-index: 1000;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-    font-weight: 600;
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-}
 
-.install-btn span {
-    margin-left: 8px;
-    font-size: 0.9rem;
-}
-
-.install-btn:hover {
-    background: rgba(59, 130, 246, 0.2);
-    color: var(--accent-primary);
-}
-
-.install-btn svg {
-    width: 24px;
-    height: 24px;
-}
 
 
 .input-group {

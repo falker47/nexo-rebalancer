@@ -9,64 +9,7 @@ if ('serviceWorker' in navigator) {
     });
 }
 
-// PWA Install Logic
-let deferredPrompt;
-const installBtn = document.getElementById('installBtn');
 
-// Detect iOS
-const isIos = () => {
-    const userAgent = window.navigator.userAgent.toLowerCase();
-    return /iphone|ipad|ipod/.test(userAgent);
-}
-
-// Check if app is in standalone mode
-const isInStandaloneMode = () => ('standalone' in window.navigator) && (window.navigator.standalone);
-
-window.addEventListener('beforeinstallprompt', (e) => {
-    // Prevent Chrome 67 and earlier from automatically showing the prompt
-    e.preventDefault();
-    // Stash the event so it can be triggered later.
-    deferredPrompt = e;
-    // Update UI to notify the user they can add to home screen
-    if (installBtn) installBtn.style.display = 'flex';
-});
-
-// Show button on iOS if not already installed
-if (isIos() && !isInStandaloneMode() && installBtn) {
-    installBtn.style.display = 'flex';
-}
-
-if (installBtn) {
-    installBtn.addEventListener('click', () => {
-        // iOS Logic
-        if (isIos()) {
-            alert("Per installare su iOS:\\n1. Tocca il tasto Condividi (in basso a centro)\\n2. Scorri e seleziona 'Aggiungi alla Schermata Home'");
-            return;
-        }
-
-        // Android/Desktop Logic
-        installBtn.style.display = 'none';
-        // Show the prompt
-        if (deferredPrompt) {
-            deferredPrompt.prompt();
-            // Wait for the user to respond to the prompt
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('User accepted the A2HS prompt');
-                } else {
-                    console.log('User dismissed the A2HS prompt');
-                    // Show button again if dismissed?
-                    // installBtn.style.display = 'flex';
-                }
-                deferredPrompt = null;
-            });
-        }
-    });
-}
-
-window.addEventListener('appinstalled', (evt) => {
-    console.log('App successfully installed');
-});
 
 
 // Logic

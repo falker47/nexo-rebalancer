@@ -2,9 +2,17 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexo Safe Rebalancer v3</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Nexo Mgr</title>
+    
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#0f172a">
+    <link rel="apple-touch-icon" href="icon-192.png">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
     <style>
+        /* CSS Ottimizzato per Mobile/App */
         :root {
             --bg-color: #0f172a;
             --card-bg: #1e293b;
@@ -15,156 +23,142 @@
             --highlight: #f59e0b;
         }
         body {
-            font-family: 'Segoe UI', Roboto, monospace;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
             background-color: var(--bg-color);
             color: var(--text-color);
             display: flex;
             justify-content: center;
-            align-items: center;
+            align-items: center; /* Center vertically */
             min-height: 100vh;
             margin: 0;
             padding: 20px;
+            overscroll-behavior: none; /* Prevent bounce effect on iOS */
         }
         .container {
             background-color: var(--card-bg);
-            padding: 2rem;
-            border-radius: 12px;
-            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.6);
+            padding: 1.5rem;
+            border-radius: 16px;
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
             width: 100%;
-            max-width: 420px;
+            max-width: 400px;
         }
-        h2 { text-align: center; margin-bottom: 1.5rem; color: #fff; font-weight: 600; letter-spacing: 1px; }
+        h2 { text-align: center; margin: 0 0 1.5rem 0; color: #fff; font-weight: 700; font-size: 1.4rem; letter-spacing: -0.5px; }
         
-        .input-group { margin-bottom: 1.2rem; }
-        label { display: block; font-size: 0.8rem; margin-bottom: 0.4rem; color: #94a3b8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-group { margin-bottom: 1rem; }
+        label { display: block; font-size: 0.75rem; margin-bottom: 0.4rem; color: #94a3b8; text-transform: uppercase; font-weight: 600; letter-spacing: 0.5px; }
         
         input {
             width: 100%;
-            padding: 12px;
+            padding: 14px;
             background-color: var(--input-bg);
-            border: 1px solid #475569;
-            border-radius: 6px;
+            border: 1px solid transparent;
+            border-radius: 10px;
             color: #fff;
-            font-size: 1.1rem;
+            font-size: 1.2rem;
             box-sizing: border-box;
             font-family: monospace;
+            transition: border 0.2s;
         }
-        input:focus { outline: 2px solid #64748b; border-color: transparent; }
+        input:focus { outline: none; border-color: #3b82f6; background-color: #1e293b; }
         
         .price-wrapper { display: flex; gap: 8px; }
         .refresh-btn {
             background-color: var(--input-bg);
-            border: 1px solid #475569;
-            color: white;
+            border: none;
+            color: #94a3b8;
             padding: 0 16px;
-            border-radius: 6px;
+            border-radius: 10px;
             cursor: pointer;
-            font-size: 1.2rem;
+            font-size: 1.4rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
-        .refresh-btn:hover { background-color: #475569; }
+        .refresh-btn:active { background-color: #475569; transform: scale(0.95); }
 
-        .api-status { font-size: 0.7rem; text-align: right; margin-top: 4px; min-height: 15px; color: #64748b; }
+        .api-status { font-size: 0.7rem; text-align: right; margin-top: 4px; min-height: 15px; color: #64748b; font-weight: 500;}
         .status-ok { color: var(--accent-buy); }
 
         .btn {
             width: 100%;
-            padding: 14px;
-            background-color: #3b82f6;
+            padding: 16px;
+            background: linear-gradient(135deg, #3b82f6, #2563eb);
             color: white;
             border: none;
-            border-radius: 6px;
+            border-radius: 12px;
             font-weight: bold;
             cursor: pointer;
-            margin-top: 20px;
+            margin-top: 15px;
             font-size: 1rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            transition: 0.2s;
+            box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+            transition: transform 0.1s;
         }
-        .btn:hover { background-color: #2563eb; transform: translateY(-1px); }
+        .btn:active { transform: scale(0.98); }
 
         /* RISULTATI */
         .result-box {
             margin-top: 1.5rem;
             padding: 1.5rem;
-            border-radius: 8px;
+            border-radius: 12px;
             text-align: center;
             display: none;
-            animation: fadeIn 0.3s ease-in-out;
-            position: relative;
-            overflow: hidden;
+            animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
 
-        .action-title { font-weight: 800; font-size: 1.5rem; display: block; margin-bottom: 0.5rem; letter-spacing: 1px; }
-        .action-value { font-size: 1.8rem; font-weight: 700; display: block; font-family: monospace; }
-        .euro-value { font-size: 1rem; opacity: 0.9; margin-top: 0.2rem; display: block; }
-        
-        .safe-badge {
-            font-size: 0.7rem;
-            background: rgba(0,0,0,0.3);
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 10px;
-            display: inline-block;
-        }
+        .action-title { font-weight: 800; font-size: 1.6rem; display: block; margin-bottom: 0.5rem; letter-spacing: -0.5px; }
+        .action-value { font-size: 2rem; font-weight: 700; display: block; font-family: monospace; line-height: 1; margin-bottom: 5px;}
+        .euro-value { font-size: 0.95rem; opacity: 0.9; display: block; }
+        .safe-badge { font-size: 0.75rem; background: rgba(0,0,0,0.3); padding: 4px 10px; border-radius: 20px; margin-top: 12px; display: inline-block; }
 
-        /* PORTFOLIO BREAKDOWN */
+        /* Breakdown */
         .breakdown {
             margin-top: 1.5rem;
-            background: #0f172a;
-            border-radius: 8px;
+            background: rgba(15, 23, 42, 0.5);
+            border-radius: 12px;
             padding: 1rem;
             font-size: 0.85rem;
             display: none;
+            border: 1px solid #334155;
         }
-        .breakdown-row {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 6px;
-            padding-bottom: 6px;
-            border-bottom: 1px solid #1e293b;
-        }
-        .breakdown-row:last-child { border-bottom: none; margin-bottom: 0; }
-        .val-label { color: #94a3b8; }
-        .val-data { color: #fff; font-family: monospace; }
-        .highlight-text { color: var(--highlight); font-weight: bold; }
-
+        .breakdown-row { display: flex; justify-content: space-between; margin-bottom: 8px; }
+        .breakdown-row:last-child { margin-bottom: 0; }
+        .val-data { color: #fff; font-family: monospace; font-weight: 600; }
+        .highlight-text { color: var(--highlight); }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>NEXO SAFE REBALANCER</h2>
+    <h2>NEXO MGR</h2>
     
     <div class="input-group">
-        <label>Quantità NEXO (Token)</label>
-        <input type="number" id="nexoQty" placeholder="0.00">
+        <label>Quantità NEXO</label>
+        <input type="number" id="nexoQty" placeholder="0.00" inputmode="decimal">
     </div>
 
     <div class="input-group">
         <label>Prezzo NEXO (€)</label>
         <div class="price-wrapper">
-            <input type="number" id="nexoPrice" step="0.0001" placeholder="Fetching...">
-            <button class="refresh-btn" onclick="fetchPrice()" title="Aggiorna">↻</button>
+            <input type="number" id="nexoPrice" step="0.0001" placeholder="Fetching..." inputmode="decimal">
+            <button class="refresh-btn" onclick="fetchPrice()">↻</button>
         </div>
-        <div id="apiStatus" class="api-status">In attesa...</div>
+        <div id="apiStatus" class="api-status">Wait...</div>
     </div>
 
     <div class="input-group">
-        <label>Tua % Attuale (da Dashboard)</label>
-        <input type="number" id="currentPct" step="0.01" placeholder="Es. 12.40">
+        <label>Tua % Attuale</label>
+        <input type="number" id="currentPct" step="0.01" placeholder="12.40" inputmode="decimal">
     </div>
 
-    <div class="input-group" style="border-top: 1px solid #334155; padding-top: 15px; margin-top: 5px;">
+    <div class="input-group" style="border-top: 1px solid #334155; padding-top: 15px; margin-top: 10px;">
         <label style="color: var(--highlight);">Target Sicurezza (%)</label>
-        <input type="number" id="targetPct" step="0.1" value="10.3" style="border-color: var(--highlight);">
-        <div style="font-size: 0.7rem; color: #64748b; margin-top: 4px;">
-            Consigliato: 10.3% - 10.8% per assorbire volatilità.
-        </div>
+        <input type="number" id="targetPct" step="0.1" value="10.5" style="border-color: var(--highlight);" inputmode="decimal">
     </div>
 
-    <button class="btn" onclick="calculate()">Calcola Safe Swap</button>
+    <button class="btn" onclick="calculate()">Calcola</button>
 
     <div id="result" class="result-box">
         <span class="action-title" id="actionText"></span>
@@ -175,27 +169,33 @@
 
     <div id="breakdown" class="breakdown">
         <div class="breakdown-row">
-            <span class="val-label">Valore Portafoglio Totale</span>
+            <span class="val-label">Totale Portafoglio</span>
             <span class="val-data" id="totalPortVal"></span>
         </div>
         <div class="breakdown-row">
-            <span class="val-label">Nuovo Target NEXO (<span id="targetLabel"></span>%)</span>
+            <span class="val-label">Target NEXO (<span id="targetLabel"></span>%)</span>
             <span class="val-data highlight-text" id="targetNexoVal"></span>
-        </div>
-        <div class="breakdown-row" style="margin-top:10px; border:none; color:#64748b; font-size:0.75rem; text-align:center; display:block;">
-            Fee stimate (0.2%) incluse nel margine di sicurezza.
         </div>
     </div>
 </div>
 
 <script>
+    // PWA Service Worker Registration
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('./sw.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW fail', err));
+        });
+    }
+
+    // Logic
     const API_URL = "https://api.coingecko.com/api/v3/simple/price?ids=nexo&vs_currencies=eur";
     
     window.onload = function() {
         fetchPrice();
         const savedQty = localStorage.getItem('nexo_qty');
         const savedTarget = localStorage.getItem('nexo_target');
-        
         if(savedQty) document.getElementById('nexoQty').value = savedQty;
         if(savedTarget) document.getElementById('targetPct').value = savedTarget;
     };
@@ -203,7 +203,7 @@
     async function fetchPrice() {
         const priceInput = document.getElementById('nexoPrice');
         const statusLabel = document.getElementById('apiStatus');
-        statusLabel.innerText = "Caricamento...";
+        statusLabel.innerText = "loading...";
         priceInput.style.opacity = "0.5";
 
         try {
@@ -211,10 +211,10 @@
             if (!response.ok) throw new Error("Err");
             const data = await response.json();
             priceInput.value = data.nexo.eur;
-            statusLabel.innerText = "Live: CoinGecko API";
+            statusLabel.innerText = "Live: CoinGecko";
             statusLabel.className = "api-status status-ok";
         } catch (error) {
-            statusLabel.innerText = "Errore API. Inserisci manuale.";
+            statusLabel.innerText = "Error API";
             statusLabel.style.color = "#ef4444";
         } finally {
             priceInput.style.opacity = "1";
@@ -228,26 +228,19 @@
         const targetPct = parseFloat(document.getElementById('targetPct').value);
 
         if (!qty || !price || !currentPct || !targetPct) {
-            alert("Compila tutti i campi!");
+            alert("Dati mancanti!");
             return;
         }
         
-        // Save preferences
         localStorage.setItem('nexo_qty', qty);
         localStorage.setItem('nexo_target', targetPct);
 
-        // LOGICA DI CALCOLO
         const nexoValueCurrent = qty * price;
-        // Ricaviamo il totale portafoglio implicito
         const totalPortfolio = nexoValueCurrent / (currentPct / 100);
-
-        // Calcoliamo il valore target basato sulla "Safe Pct" (es. 10.5%)
         const targetNexoValue = totalPortfolio * (targetPct / 100);
-        
         const valueToMove = nexoValueCurrent - targetNexoValue;
         const tokensToMove = valueToMove / price;
 
-        // UI Updates
         const resultBox = document.getElementById('result');
         const breakdownBox = document.getElementById('breakdown');
         const actionText = document.getElementById('actionText');
@@ -255,43 +248,30 @@
         resultBox.style.display = 'block';
         breakdownBox.style.display = 'block';
 
-        // Formattazione
         const fmtEuro = (n) => `€ ${n.toLocaleString('it-IT', {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         
         document.getElementById('totalPortVal').innerText = fmtEuro(totalPortfolio);
         document.getElementById('targetNexoVal').innerText = fmtEuro(targetNexoValue);
         document.getElementById('targetLabel').innerText = targetPct;
 
-        // Buffer Analysis
-        const buffer = (targetPct - 10).toFixed(1);
-        const bufferMsg = `Safety Buffer: ${buffer}% sopra il Platinum`;
-
         if (valueToMove > 0) {
-            // VENDITA (Siamo sopra il target di sicurezza)
             resultBox.style.backgroundColor = 'rgba(239, 68, 68, 0.15)';
-            resultBox.style.border = '1px solid var(--accent-sell)';
             resultBox.style.color = '#fca5a5';
-            
-            actionText.innerText = "VENDI NEXO";
-            document.getElementById('tokenValue').innerText = `-${tokensToMove.toFixed(2)} NEXO`;
+            actionText.innerText = "VENDI";
+            document.getElementById('tokenValue').innerText = `-${tokensToMove.toFixed(2)}`;
             document.getElementById('euroValue').innerText = `Incassi: ${fmtEuro(valueToMove)}`;
-            document.getElementById('bufferText').innerText = `Rimani al ${targetPct}% (Platinum garantito)`;
+            document.getElementById('bufferText').innerText = `Mantieni il ${targetPct}%`;
         } else {
-            // ACQUISTO (Siamo sotto il target di sicurezza)
             const absTokens = Math.abs(tokensToMove);
             const absValue = Math.abs(valueToMove);
-
             resultBox.style.backgroundColor = 'rgba(34, 197, 94, 0.15)';
-            resultBox.style.border = '1px solid var(--accent-buy)';
             resultBox.style.color = '#86efac';
-            
-            actionText.innerText = "COMPRA NEXO";
-            document.getElementById('tokenValue').innerText = `+${absTokens.toFixed(2)} NEXO`;
+            actionText.innerText = "COMPRA";
+            document.getElementById('tokenValue').innerText = `+${absTokens.toFixed(2)}`;
             document.getElementById('euroValue').innerText = `Spendi: ${fmtEuro(absValue)}`;
-            document.getElementById('bufferText').innerText = `Risali al ${targetPct}% (Cuscinetto attivo)`;
+            document.getElementById('bufferText').innerText = `Risali al ${targetPct}%`;
         }
     }
 </script>
-
 </body>
 </html>

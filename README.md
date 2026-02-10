@@ -8,7 +8,7 @@
 
 Questo tool calcola l'esatta quantità di token NEXO da vendere o acquistare per mantenere una percentuale target (es. 10%) sul portafoglio totale. Risolve il problema matematico dell'**invarianza del portafoglio**: calcola il rebalancing considerando che il capitale scambiato rimane all'interno dell'ecosistema (non esce dal wallet).
 
-🔗 **[Apri la Web App](https://falker47.github.io/nexo-rebalancer/)** *(Sostituisci con il tuo link reale)*
+🔗 **[Apri la Web App](https://falker47.github.io/nexo-rebalancer/)**
 
 ---
 

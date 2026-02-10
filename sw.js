@@ -1,13 +1,15 @@
-const CACHE_NAME = 'nexo-v2'; // Ho incrementato la versione
+const CACHE_NAME = 'nexo-v4'; // Ho incrementato la versione
 const ASSETS = [
   './',
   './index.html',
-  './site.webmanifest',              // Era manifest.json
-  './web-app-manifest-192x192.png',  // Era icon-192.png
-  './web-app-manifest-512x512.png',  // Era icon-512.png
-  './favicon-96x96.png',
-  './favicon.svg',
-  './apple-touch-icon.png'
+  './css/style.css',
+  './js/app.js',
+  './assets/site.webmanifest',
+  './assets/web-app-manifest-192x192.png',
+  './assets/web-app-manifest-512x512.png',
+  './assets/favicon-96x96.png',
+  './assets/favicon.svg',
+  './assets/apple-touch-icon.png'
 ];
 
 // Installazione

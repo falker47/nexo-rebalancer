@@ -176,9 +176,9 @@ function resetResultUI() {
     document.getElementById('euroValue').innerText = "---";
     document.getElementById('bufferText').innerText = "Enter all data";
 
-    document.getElementById('totalPortVal').innerText = "€ 0.00";
-    document.getElementById('targetNexoVal').innerText = "€ 0.00";
-    document.getElementById('targetLabel').innerText = "0";
+    // document.getElementById('totalPortVal').innerText = "€ 0.00";
+    // document.getElementById('targetNexoVal').innerText = "€ 0.00";
+    // document.getElementById('targetLabel').innerText = "0";
 }
 
 function calculate() {
@@ -214,9 +214,9 @@ function calculate() {
 
     const fmtEuro = (n) => `€ ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
 
-    document.getElementById('totalPortVal').innerText = fmtEuro(totalPortfolio);
-    document.getElementById('targetNexoVal').innerText = fmtEuro(targetNexoValue);
-    document.getElementById('targetLabel').innerText = targetPct;
+    // document.getElementById('totalPortVal').innerText = fmtEuro(totalPortfolio);
+    // document.getElementById('targetNexoVal').innerText = fmtEuro(targetNexoValue);
+    // document.getElementById('targetLabel').innerText = targetPct;
 
     // Reset classes
     resultBox.classList.remove('result-sell', 'result-buy');

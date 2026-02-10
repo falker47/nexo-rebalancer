@@ -44,6 +44,8 @@ body {
     /* Mobile First: Full screen, no border/radius */
     border: none;
     padding: 1.5rem;
+    padding-bottom: 90px;
+    /* Space for fixed install button */
     border-radius: 0;
     box-shadow: none;
     width: 100%;
@@ -103,10 +105,7 @@ body {
         /* Hide separator in grid mode as border-right handles it */
     }
 
-    /* Adjust breakdown to fit better in column */
-    .breakdown {
-        margin-top: 2rem;
-    }
+    /* Adjust breakdown removed */
 }
 
 /* Header Design */
@@ -382,40 +381,7 @@ input:focus {
     font-weight: 600;
 }
 
-/* Breakdown */
-.breakdown {
-    margin-top: 1.5rem;
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 12px;
 
-    padding: 1.25rem;
-    font-size: 0.9rem;
-    display: block;
-}
-
-.breakdown-row {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 10px;
-}
-
-.breakdown-row:last-child {
-    margin-bottom: 0;
-}
-
-.val-label {
-    color: var(--text-muted);
-}
-
-.val-data {
-    color: #fff;
-    font-family: monospace;
-    font-weight: 600;
-}
-
-.highlight-text {
-    color: var(--highlight);
-}
 
 /* Separator */
 .separator {

@@ -45,25 +45,23 @@
                 </div>
 
                 <div class="input-group">
-                    <label>NEXO Price (€)</label>
-                    <div class="price-wrapper">
-                        <input type="number" id="nexoPrice" step="0.0001" placeholder="Fetching..." inputmode="decimal">
-                        <button class="refresh-btn">↻</button>
-                    </div>
-                    <div id="apiStatus" class="api-status">Wait...</div>
+                    <label>NEXO Price (€) <small>optional</small></label>
+                    <input type="number" id="nexoPrice" step="0.0001" min="0" placeholder="Only for € estimate" inputmode="decimal">
+                    <div class="field-note">The token rebalance does not depend on price.</div>
                 </div>
 
                 <div class="input-group">
-                    <label>Current Allocation %</label>
-                    <input type="number" id="currentPct" step="0.01" placeholder="12.40" inputmode="decimal">
+                    <label>Current NEXO Share (%)</label>
+                    <input type="number" id="currentPct" step="0.01" min="0.01" max="100" placeholder="12.40" inputmode="decimal">
+                    <div class="field-note">Enter the NEXO percentage of total portfolio value.</div>
                 </div>
 
                 <div class="separator"></div>
 
                 <div class="input-group">
-                    <label style="color: var(--highlight);">Target Allocation (%)</label>
-                    <input type="number" id="targetPct" step="0.1" value="10.5" style="border-color: var(--highlight);"
-                        inputmode="decimal">
+                    <label style="color: var(--highlight);">Target NEXO Share (%)</label>
+                    <input type="number" id="targetPct" step="0.1" min="0.1" max="100" value="10.5" style="border-color: var(--highlight);" inputmode="decimal">
+                    <div class="field-note">Platinum threshold checked 2026-09-21: 10%. Verify current Nexo rules before use; any extra is only your buffer.</div>
                 </div>
             </div>
 

@@ -1,9 +1,10 @@
-const CACHE_NAME = 'nexo-v4'; // Ho incrementato la versione
+const CACHE_NAME = 'nexo-v5';
 const ASSETS = [
   './',
   './index.html',
   './css/style.css',
   './js/app.js',
+  './js/rebalance.js',
   './assets/site.webmanifest',
   './assets/web-app-manifest-192x192.png',
   './assets/web-app-manifest-512x512.png',

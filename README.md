@@ -1,76 +1,94 @@
-# 🦁 Nexo Platinum Rebalancer
+# Nexo Rebalancer
 
-> **A PWA (Progressive Web App) tool to maintain the Platinum Tier on Nexo by optimizing market fluctuations.**
+Small client-side calculator for estimating how many **NEXO tokens** to buy or sell to move from a current NEXO portfolio share to a chosen target share.
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Status: Stable](https://img.shields.io/badge/Status-Stable-success.svg)]()
-[![Privacy: Local](https://img.shields.io/badge/Privacy-100%25_Local-blue.svg)]()
+**Live app:** https://falker47.github.io/nexo-rebalancer/
 
-This tool calculates the exact amount of NEXO tokens to sell or buy to maintain a target percentage (e.g., 10%) of your total portfolio. It addresses the **portfolio invariance** mathematical problem: it calculates rebalancing while considering that the swapped capital remains within the ecosystem (does not leave the wallet).
+## Current Nexo assumption
 
-🔗 **[Open Web App](https://falker47.github.io/nexo-rebalancer/)**
+As checked on **2026-09-21**, current Nexo materials describe the Platinum Loyalty Tier as requiring at least **10% NEXO** relative to the portfolio, with the tier checked on a daily snapshot. Product eligibility and benefits can have additional requirements and vary by jurisdiction.
 
----
+Official references:
 
-## 🚀 Features
+- Nexo — Earn on Bitcoin: https://nexo.com/earn-crypto/bitcoin
+- Nexo — Loyalty-tier comparison: https://nexo.com/blog/nexo-vs-salt-lending
 
-* **📊 Real Differential Calculation:** It doesn't just calculate 10% of the current value but simulates the *post-swap* portfolio to ensure the target is mathematically achieved.
-* **🛡️ Safety Buffer:** Allows setting an "over-platinum" target (e.g., 10.5%) to absorb volatility and exchange fees without losing the tier.
-* **📡 Live Price Fetching:** Retrieves real-time `NEXO/EUR` price via public API (CoinGecko).
-* **🔒 Privacy-First:** No database, no backend. Data (token quantity) is saved only in your browser's `localStorage`.
-* **📱 PWA Ready:** Installable on iOS and Android as a native application (works offline).
+The default target in this app is **10.5%**. The extra 0.5 percentage points are only a user-selected volatility buffer; they are not an official Nexo requirement.
 
----
+Nexo can change its rules. Check the current Nexo app/website before acting.
 
-## 🧮 Mathematical Logic
+## What the calculator assumes
 
-The calculator uses the following logic to determine the delta to swap, assuming the **Total Portfolio Value ($V_{tot}$)** remains constant during the swap (asset A $\leftrightarrow$ asset B).
+The calculation treats the entered percentages as **NEXO value / total portfolio value** and assumes a rebalance is performed by swapping assets *inside the same portfolio*, so total portfolio value stays approximately constant before fees, spread, slippage, and price movement.
 
-1.  **Extract Implicit $V_{tot}$:**
-    $$V_{tot} = \frac{Q_{nexo} \cdot P_{market}}{(\%_{current} / 100)}$$
-2.  **Calculate Target Value ($V_{target}$):**
-    $$V_{target} = V_{tot} \cdot \%_{desired}$$
-3.  **Calculate Delta ($Q_{delta}$):**
-    $$Q_{delta} = \frac{(Q_{nexo} \cdot P_{market}) - V_{target}}{P_{market}}$$
+If:
 
----
+- `Q` = current NEXO quantity
+- `c` = current NEXO share
+- `t` = target NEXO share
 
-## 🛠️ Tech Stack
+then:
 
-* **Core:** HTML5, CSS3 (Responsive Grid), Vanilla JavaScript (ES6+).
-* **API:** [CoinGecko Simple Price API](https://www.coingecko.com/en/api).
-* **PWA:** Custom Service Worker for caching and offline support.
-
----
-
-## 📦 Installation and Usage
-
-### Method 1: Web App (Recommended)
-1.  Visit the project link via mobile browser (Chrome/Safari).
-2.  Tap "Share" (iOS) or Menu (Android) -> **"Add to Home Screen"**.
-3.  Launch the app from the created icon.
-
-### Method 2: Local (Dev)
-```bash
-# Clone the repository
-git clone https://github.com/falker47/nexo-rebalancer.git
-
-# Enter the folder
-cd nexo-rebalancer
-
-# Open index.html with any browser
 ```
----
+target NEXO quantity = Q × t / c
+token delta          = target quantity - Q
+```
 
-## ⚠️ Disclaimer
-This software is provided "as is", without warranty of any kind.
+A positive delta means **BUY**; a negative delta means **SELL**.
 
-The author is not affiliated with Nexo.
+### Price is optional
 
-This tool does not provide financial advice.
+The NEXO/EUR price cancels out of the token calculation. It is therefore **not required** to determine the NEXO quantity to rebalance.
 
-CoinGecko APIs are public and may be subject to rate-limiting.
+If you enter a price manually, the app also shows an approximate EUR value for the suggested token delta.
 
-Always check calculations before executing large orders.
+This replaced the original automatic-price chain because its assumptions had become stale:
 
-Made with ❤️ by Falker47
+- CoinGecko's Demo API now requires an API key;
+- the old Kraken `NEXO/EUR` fallback is not a reliable trading-price source for this app.
+
+Keeping price optional also preserves the app's offline/privacy-first behavior.
+
+## Features
+
+- NEXO quantity + current/target portfolio-share calculation
+- configurable target buffer
+- optional EUR estimate
+- local-only saved quantity and target via `localStorage`
+- installable PWA
+- offline calculator after assets are cached
+- no backend and no account/API credentials
+
+## Verification
+
+The core mathematics is isolated in `js/rebalance.js` and covered by zero-dependency Node tests.
+
+```bash
+npm test
+```
+
+The test suite covers:
+
+- sell rebalancing;
+- buy rebalancing;
+- already-balanced portfolios;
+- price invariance of the token delta;
+- invalid allocation inputs.
+
+GitHub Actions runs syntax checks and the tests on every push to `main`.
+
+## Local use
+
+Because the app uses ES modules and a service worker, serve it through a local HTTP server:
+
+```bash
+python -m http.server
+```
+
+Then open `http://localhost:8000`.
+
+## Disclaimer
+
+This is an independent calculation utility and is **not affiliated with Nexo**.
+
+It does not access your Nexo account, verify your actual Loyalty Tier, place trades, account for fees/slippage, or provide financial advice. Always verify the current platform rules and the values shown in your Nexo account before making a transaction.

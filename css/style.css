@@ -388,3 +388,15 @@ input:focus {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     margin: 20px 0;
 }
+
+.field-note {
+  margin-top: 6px;
+  color: var(--text-secondary, #94a3b8);
+  font-size: 0.75rem;
+  line-height: 1.35;
+}
+
+.input-group label small {
+  font-weight: 400;
+  opacity: 0.7;
+}

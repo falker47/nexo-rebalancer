@@ -1,94 +1,173 @@
 # Nexo Rebalancer
 
-Small client-side calculator for estimating how many **NEXO tokens** to buy or sell to move from a current NEXO portfolio share to a chosen target share.
+Small client-side calculator for estimating how many **NEXO tokens** to buy or sell to move from a current portfolio allocation to a chosen target.
 
 **Live app:** https://falker47.github.io/nexo-rebalancer/
 
-## Current Nexo assumption
+## Nexo Loyalty Program
 
-As checked on **2026-09-21**, current Nexo materials describe the Platinum Loyalty Tier as requiring at least **10% NEXO** relative to the portfolio, with the tier checked on a daily snapshot. Product eligibility and benefits can have additional requirements and vary by jurisdiction.
+Nexo's public documentation, reviewed on **2026-11-07**, describes the Platinum Loyalty Tier as requiring a NEXO allocation of at least 10%. Its support examples express this as the value of NEXO relative to the **other assets in the portfolio**.
+
+Nexo's updated product information also refers to real-time tier adjustments and additional eligibility conditions. Requirements, benefits, and availability can vary by product and jurisdiction.
+
+**Important: this calculator uses a different denominator.**
+
+The calculator defines NEXO allocation as:
+
+`NEXO value / total portfolio value (including NEXO)`
+
+This differs from:
+
+`NEXO value / value of all other assets`
+
+For example:
+
+- NEXO worth 10% of the other assets represents approximately **9.09% of the total portfolio**.
+- NEXO worth 10.5% of the total portfolio represents approximately **11.73% of the other assets**.
+
+The app's default target of **10.5% of total portfolio value** is a configurable, illustrative buffer. It is not an official Nexo threshold or a guaranteed margin of protection.
+
+Do not enter a percentage based on NEXO versus other assets into a field that expects NEXO versus total portfolio value without converting it first.
+
+The calculator does not determine official Loyalty Tier eligibility. Check your actual tier, applicable conditions, and current rules directly in your Nexo account before acting.
 
 Official references:
 
-- Nexo — Earn on Bitcoin: https://nexo.com/earn-crypto/bitcoin
-- Nexo — Loyalty-tier comparison: https://nexo.com/blog/nexo-vs-salt-lending
+- [Nexo — What is the NEXO Token?](https://nexo.com/blog/what-is-nexo-token)
+- [Nexo — Fixed-term Savings and Platinum requirements](https://support.nexo.com/article/how-to-earn-interest-with-fixed-term-savings)
+- [Nexo — Loan FAQ and Loyalty Tier calculation example](https://support.nexo.com/article/nexo-loans-faq-uk)
 
-The default target in this app is **10.5%**. The extra 0.5 percentage points are only a user-selected volatility buffer; they are not an official Nexo requirement.
+## How the calculator works
 
-Nexo can change its rules. Check the current Nexo app/website before acting.
+The calculation assumes that the entered percentages represent **NEXO value divided by total portfolio value**, including NEXO itself.
 
-## What the calculator assumes
+It models a rebalance performed by swapping assets **within the same portfolio**, without adding or withdrawing funds. Total portfolio value is assumed to remain constant.
 
-The calculation treats the entered percentages as **NEXO value / total portfolio value** and assumes a rebalance is performed by swapping assets *inside the same portfolio*, so total portfolio value stays approximately constant before fees, spread, slippage, and price movement.
-
-If:
+Given:
 
 - `Q` = current NEXO quantity
-- `c` = current NEXO share
-- `t` = target NEXO share
+- `c` = current NEXO percentage of total portfolio value
+- `t` = target NEXO percentage of total portfolio value
 
-then:
+The calculator uses:
 
-```
+```text
 target NEXO quantity = Q × t / c
 token delta          = target quantity - Q
 ```
 
-A positive delta means **BUY**; a negative delta means **SELL**.
+The result is interpreted as:
 
-### Price is optional
+- **BUY:** positive token delta
+- **SELL:** negative token delta
+- **BALANCED:** negligible calculated difference
 
-The NEXO/EUR price cancels out of the token calculation. It is therefore **not required** to determine the NEXO quantity to rebalance.
+This is a mathematical estimate, not a trade execution or verification of actual account allocation.
 
-If you enter a price manually, the app also shows an approximate EUR value for the suggested token delta.
+### Optional EUR estimate
 
-This replaced the original automatic-price chain because its assumptions had become stale:
+The NEXO price cancels out of the token calculation under the fixed-portfolio assumption.
 
-- CoinGecko's Demo API now requires an API key;
-- the old Kraken `NEXO/EUR` fallback is not a reliable trading-price source for this app.
+A price is therefore not required to estimate the token quantity.
 
-Keeping price optional also preserves the app's offline/privacy-first behavior.
+If a positive NEXO/EUR price is supplied manually, the app also calculates:
+
+```text
+estimated EUR value = |token delta| × NEXO/EUR price
+```
+
+The EUR estimate is not an executable quote and excludes trading costs.
+
+Automatic market-price retrieval is not implemented.
+
+### Model limitations
+
+The calculation assumes:
+
+- A positive, internally consistent NEXO holding and current allocation.
+- The same portfolio valuation basis for current and target percentages.
+- No deposits, withdrawals, or external funding during rebalancing.
+- Unchanged asset prices during the simulated swap.
+- No trading fees, spread, slippage, or rounding effects in the mathematical result.
+
+The model is not reliable for zero NEXO holdings or inconsistent quantity/allocation inputs. The current implementation can accept some inconsistent inputs and return a misleading result.
+
+Displayed token quantities are rounded to two decimal places, so very small differences may not be visible.
+
+Actual transactions can change the resulting allocation. The calculator does not guarantee that any target percentage or Loyalty Tier will be maintained.
 
 ## Features
 
-- NEXO quantity + current/target portfolio-share calculation
-- configurable target buffer
-- optional EUR estimate
-- local-only saved quantity and target via `localStorage`
-- installable PWA
-- offline calculator after assets are cached
-- no backend and no account/API credentials
+- NEXO quantity and current/target allocation inputs
+- Configurable target percentage, defaulting to 10.5%
+- BUY, SELL, and BALANCED calculation results
+- Optional manually entered NEXO/EUR price
+- Local persistence of NEXO quantity and target percentage
+- Installable Progressive Web App where supported
+- Offline calculation after the required assets are cached
+- No backend, Nexo account connection, or API credentials
 
-## Verification
+The current allocation percentage and optional price are not saved between sessions.
 
-The core mathematics is isolated in `js/rebalance.js` and covered by zero-dependency Node tests.
+## Privacy and security
+
+All calculator inputs are processed in the browser.
+
+The NEXO quantity and target percentage are stored in browser `localStorage`. They are not synchronized with a Nexo account and may remain accessible to anyone using the same browser profile.
+
+The application does not request wallet credentials, private keys, or Nexo login information.
+
+No Nexo API requests or automated transactions are implemented. Normal requests to the static hosting provider still occur when loading the application.
+
+## Local use
+
+The application uses JavaScript ES modules and a service worker. Serve the repository through a local HTTP server rather than opening `index.html` directly as a file.
+
+With Python 3 installed, run from the repository root:
+
+```bash
+python -m http.server 8000
+```
+
+Open:
+
+http://localhost:8000
+
+A compatible browser is required for PWA installation and offline capabilities.
+
+## Tests and verification
+
+The calculation logic is isolated in `js/rebalance.js` and tested using Node.js's built-in test runner.
+
+No external npm dependencies are required.
+
+Run:
 
 ```bash
 npm test
 ```
 
-The test suite covers:
+The automated tests cover:
 
-- sell rebalancing;
-- buy rebalancing;
-- already-balanced portfolios;
-- price invariance of the token delta;
-- invalid allocation inputs.
+- BUY and SELL calculations
+- Already-balanced allocations
+- Independence of token quantity from the optional price
+- Selected invalid percentage inputs
 
-GitHub Actions runs syntax checks and the tests on every push to `main`.
+GitHub Actions runs JavaScript syntax checks and the Node test suite on pushes to `main` and on pull requests.
 
-## Local use
+These tests verify the calculation logic. They do not constitute end-to-end browser testing, PWA installation testing, live Nexo integration testing, or verification of financial outcomes.
 
-Because the app uses ES modules and a service worker, serve it through a local HTTP server:
+## License
 
-```bash
-python -m http.server
-```
-
-Then open `http://localhost:8000`.
+No explicit software license is currently included in this repository. Public availability of the source code does not itself grant a license to redistribute or modify it.
 
 ## Disclaimer
 
-This is an independent calculation utility and is **not affiliated with Nexo**.
+Nexo Rebalancer is an independent utility and is **not affiliated with or endorsed by Nexo**.
 
-It does not access your Nexo account, verify your actual Loyalty Tier, place trades, account for fees/slippage, or provide financial advice. Always verify the current platform rules and the values shown in your Nexo account before making a transaction.
+It does not access your Nexo account, verify your actual Loyalty Tier, execute transactions, or provide personalized financial advice.
+
+All results are estimates based on user-supplied data and simplified assumptions. Cryptocurrency prices and platform conditions can change, and transactions may involve significant financial risk.
+
+Always verify your account balances, eligibility, current Nexo rules, and transaction details before making financial decisions.
